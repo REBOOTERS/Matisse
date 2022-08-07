@@ -1,0 +1,26 @@
+apply plugin: 'maven-publish'
+
+def GROUP_ID = "com.zhihu.android"
+def ARTIFACT_ID = "matisse"
+def VERSION = "v0.5.2"
+
+
+// 1. 增加上传源码的task
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = "sources"
+}
+
+afterEvaluate {
+    publishing {
+        publications { PublicationContainer publicationContainer ->
+            release(MavenPublication) {
+                from components.release // 注释1:使用 Android Gradle 插件生成的组件，作为发布的内容
+                artifact sourceJar // 上传源码
+                groupId = GROUP_ID
+                artifactId = ARTIFACT_ID
+                version = VERSION
+            }
+        }
+    }
+}

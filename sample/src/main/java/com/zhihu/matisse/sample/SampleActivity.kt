@@ -30,7 +30,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.tbruyelle.rxpermissions2.RxPermissions
+import com.permissionx.guolindev.PermissionX
 import com.zhihu.matisse.Matisse
 import com.zhihu.matisse.MimeType
 import com.zhihu.matisse.engine.impl.GlideEngine
@@ -56,10 +56,10 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     // <editor-fold defaultstate="collapsed" desc="onClick">
     @SuppressLint("CheckResult")
     override fun onClick(v: View) {
-        val rxPermissions = RxPermissions(this)
-        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .subscribe({ aBoolean: Boolean ->
-                if (aBoolean) {
+        PermissionX.init(this)
+            .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .request { allGranted, _, _ ->
+                if (allGranted) {
                     startAction(v)
                 } else {
                     Toast.makeText(
@@ -69,7 +69,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
                     )
                         .show()
                 }
-            }) { obj: Throwable -> obj.printStackTrace() }
+            }
     }
 
     // </editor-fold>

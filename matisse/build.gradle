@@ -67,3 +67,5 @@ task checkstyle(type:Checkstyle) {
     classpath = files()
     source 'src/main/java'
 }
+
+apply from: file("publish.gradle")
