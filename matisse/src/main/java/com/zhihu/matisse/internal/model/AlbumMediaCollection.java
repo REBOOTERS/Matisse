@@ -16,9 +16,12 @@
  */
 package com.zhihu.matisse.internal.model;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,10 +29,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import com.engineer.ai.util.ImageLabelHelper;
+import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.loader.AlbumMediaLoader;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String ARGS_ALBUM = "args_album";
@@ -63,6 +69,19 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
         }
 
         mCallbacks.onAlbumMediaLoad(data);
+        Cursor copy = data;
+        ArrayList<Uri> uriList = new ArrayList<>();
+        if (copy.moveToFirst()) {
+            do {
+                Uri uri = getUri(copy);
+//                Log.d("zzzz", "uri = " + uri);
+                uriList.add(uri);
+
+            } while (copy.moveToNext());
+        }
+        if (mContext.get() != null) {
+            ImageLabelHelper.INSTANCE.doLabel(mContext.get(), uriList);
+        }
     }
 
     @Override
@@ -106,5 +125,24 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
         void onAlbumMediaLoad(Cursor cursor);
 
         void onAlbumMediaReset();
+    }
+
+    private static Uri getUri(Cursor cursor) {
+        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
+        String mimeType = cursor.getString(
+                cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+        Uri contentUri;
+
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            // ?
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+
+        Uri uri = ContentUris.withAppendedId(contentUri, id);
+        return uri;
     }
 }
