@@ -42,10 +42,11 @@ object ImageLabelHelper {
         val cachedThreadPool = Executors.newFixedThreadPool(4)
         var count = 0
         uris.forEach {
+            val start = System.currentTimeMillis()
             cachedThreadPool.submit {
                 doLabel(context, it) {
                     count++
-                    Log.i(TAG, count.toString())
+//                    Log.i(TAG, count.toString())
                     if (count >= uris.size) {
                         Log.i(TAG, categories.keys.toString())
                         var sum = 0
@@ -54,6 +55,7 @@ object ImageLabelHelper {
                         }
                         Log.i(TAG, sum.toString())
                         Log.i(TAG, categories.values.size.toString())
+                        Log.i(TAG, "cost time ${System.currentTimeMillis() - start}")
                     }
                 }
             }
