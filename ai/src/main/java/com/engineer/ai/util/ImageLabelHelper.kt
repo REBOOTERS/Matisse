@@ -7,7 +7,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeler
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
-import java.io.IOException
 import java.util.concurrent.Executors
 
 
@@ -21,6 +20,7 @@ object ImageLabelHelper {
 
     @Volatile
     private var categories = HashMap<String, ArrayList<Uri>>()
+
 
     fun init() {
 //        val localModel = LocalModel.Builder().setAssetFilePath("model.tflite").build()
@@ -39,38 +39,42 @@ object ImageLabelHelper {
         categories.clear()
         Log.i(TAG, uris.size.toString())
 
-        val cachedThreadPool = Executors.newCachedThreadPool()
+        val cachedThreadPool = Executors.newFixedThreadPool(4)
+        var count = 0
         uris.forEach {
-            val t = Runnable {
-
-            }
-
-
             cachedThreadPool.submit {
-                doLabel(context, it)
+                doLabel(context, it) {
+                    count++
+                    Log.i(TAG, count.toString())
+                    if (count >= uris.size) {
+                        Log.i(TAG, categories.keys.toString())
+                        var sum = 0
+                        categories.keys.forEach {
+                            sum += (categories[it]?.size ?: 0)
+                        }
+                        Log.i(TAG, sum.toString())
+                        Log.i(TAG, categories.values.size.toString())
+                    }
+                }
             }
         }
-        Log.i(TAG, categories.keys.toString())
-        var sum = 0
-        categories.keys.forEach {
-            sum += (categories[it]?.size ?: 0)
-        }
-        Log.i(TAG, sum.toString())
-        Log.i(TAG, categories.values.size.toString())
     }
 
-    fun doLabel(context: Context, uri: Uri) {
-
-
-        var image: InputImage
+    fun doLabel(context: Context, uri: Uri, callback: () -> Unit) {
+        val image: InputImage
         try {
             image = InputImage.fromFilePath(context, uri)
             labeler?.process(image)?.addOnSuccessListener { labels ->
+                if (labels == null || labels.size == 0) {
+                    Log.e(TAG, "null label")
+                    callback()
+                }
                 for (label in labels) {
                     val text = label.text
                     val confidence = label.confidence
                     val index = label.index
 //                    Log.i(TAG, "uri = $uri")
+//                    Log.i(TAG, "text=$text,confidence=$confidence,index=$index")
 
                     var list = categories[text]
                     if (list == null) {
@@ -82,20 +86,18 @@ object ImageLabelHelper {
                     } else {
                         categories[text]?.add(uri)
                     }
+                    callback()
                     break
-//                    Log.i(TAG, "text=$text,confidence=$confidence,index=$index")
                 }
 
             }?.addOnFailureListener { e ->
+                callback()
                 Log.e(TAG, e.stackTraceToString())
             }
 
-        } catch (e: IOException) {
+        } catch (e: Exception) {
+            callback()
             e.printStackTrace()
-        } catch (e: UnsupportedOperationException) {
-            e.printStackTrace()
-
         }
-
     }
 }

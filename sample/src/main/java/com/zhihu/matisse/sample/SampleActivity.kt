@@ -172,7 +172,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             Log.d(TAG, "paths = ${it.first},urls = ${it.second}")
 
             it.second.forEach { uri ->
-                ImageLabelHelper.doLabel(this, uri)
+                ImageLabelHelper.doLabel(this, uri) {}
             }
 
             mAdapter?.setData(it.second, it.first)
