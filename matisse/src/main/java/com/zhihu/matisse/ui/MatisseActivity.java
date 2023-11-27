@@ -60,6 +60,7 @@ import com.zhihu.matisse.internal.utils.PathUtils;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+import com.zhihu.matisse.ui.labels.LabelCategoryActivity;
 
 import java.util.ArrayList;
 
@@ -155,6 +156,13 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
         mAlbumCollection.loadAlbums();
+
+        findViewById(R.id.debug).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(v.getContext(), LabelCategoryActivity.class));
+            }
+        });
     }
 
     @Override
