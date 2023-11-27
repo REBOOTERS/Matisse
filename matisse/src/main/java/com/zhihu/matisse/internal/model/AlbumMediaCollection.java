@@ -37,6 +37,9 @@ import com.zhihu.matisse.internal.loader.AlbumMediaLoader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+
 public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String ARGS_ALBUM = "args_album";
     private static final String ARGS_ENABLE_CAPTURE = "args_enable_capture";
@@ -44,6 +47,8 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
     private LoaderManager mLoaderManager;
     private AlbumMediaCallbacks mCallbacks;
     private int mCurrentLoaderId = 2;
+
+    private LabelLoadCallback mLabelLoadCallback;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -80,7 +85,12 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
             } while (copy.moveToNext());
         }
         if (mContext.get() != null) {
-            ImageLabelHelper.INSTANCE.doLabel(mContext.get(), uriList);
+            ImageLabelHelper.INSTANCE.getLabel(mContext.get(), uriList, () -> {
+                if (mLabelLoadCallback != null) {
+                    mLabelLoadCallback.onLabelLoad();
+                }
+                return Unit.INSTANCE;
+            });
         }
     }
 
@@ -106,6 +116,7 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
             mLoaderManager.destroyLoader(mCurrentLoaderId);
         }
         mCallbacks = null;
+        mLabelLoadCallback = null;
     }
 
     public void load(@Nullable Album target) {
@@ -125,6 +136,14 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
         void onAlbumMediaLoad(Cursor cursor);
 
         void onAlbumMediaReset();
+    }
+
+    public interface LabelLoadCallback {
+        void onLabelLoad();
+    }
+
+    public void setLabelLoadCallback(LabelLoadCallback labelLoadCallback) {
+        this.mLabelLoadCallback = labelLoadCallback;
     }
 
     private static Uri getUri(Cursor cursor) {

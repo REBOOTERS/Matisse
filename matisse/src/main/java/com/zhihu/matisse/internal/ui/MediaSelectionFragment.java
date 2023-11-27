@@ -49,6 +49,8 @@ public class MediaSelectionFragment extends Fragment implements
     private AlbumMediaAdapter.CheckStateListener mCheckStateListener;
     private AlbumMediaAdapter.OnMediaClickListener mOnMediaClickListener;
 
+    private AlbumMediaCollection.LabelLoadCallback mLabelLoadCallback;
+
     public static MediaSelectionFragment newInstance(Album album) {
         MediaSelectionFragment fragment = new MediaSelectionFragment();
         Bundle args = new Bundle();
@@ -105,6 +107,14 @@ public class MediaSelectionFragment extends Fragment implements
         mRecyclerView.addItemDecoration(new MediaGridInset(spanCount, spacing, false));
         mRecyclerView.setAdapter(mAdapter);
         mAlbumMediaCollection.onCreate(getActivity(), this);
+        mAlbumMediaCollection.setLabelLoadCallback(new AlbumMediaCollection.LabelLoadCallback() {
+            @Override
+            public void onLabelLoad() {
+                if (mLabelLoadCallback != null) {
+                    mLabelLoadCallback.onLabelLoad();
+                }
+            }
+        });
         mAlbumMediaCollection.load(album, selectionSpec.capture);
     }
 
@@ -150,5 +160,9 @@ public class MediaSelectionFragment extends Fragment implements
 
     public interface SelectionProvider {
         SelectedItemCollection provideSelectedItemCollection();
+    }
+
+    public void setLabelLoadCallback(AlbumMediaCollection.LabelLoadCallback labelLoadCallback) {
+        this.mLabelLoadCallback = labelLoadCallback;
     }
 }

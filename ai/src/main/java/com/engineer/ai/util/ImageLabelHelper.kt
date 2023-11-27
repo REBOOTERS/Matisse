@@ -10,6 +10,7 @@ import com.google.mlkit.vision.label.ImageLabeler
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import java.util.concurrent.Executors
+import kotlin.concurrent.Volatile
 
 
 /**
@@ -22,10 +23,13 @@ object ImageLabelHelper {
 
     private var labeler: ImageLabeler? = null
 
-    @Volatile
     private var categories = HashMap<Int, ArrayList<Uri>>()
 
+    @Volatile
+    private var isRunning = false
+
     private var labelList = ArrayList<Labels>()
+
 
     fun getLabelList() = labelList
 
@@ -42,8 +46,18 @@ object ImageLabelHelper {
         labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
     }
 
-    fun doLabel(context: Context, uris: List<Uri>) {
+    fun getLabel(context: Context, uris: List<Uri>, callback: (() -> Unit)? = null) {
 
+        if (labelList.size > 0) {
+            callback?.invoke()
+            return
+        }
+
+        if (isRunning) {
+            Log.i(TAG, "last task is running ,ignore")
+            return
+        }
+        isRunning = true
 
         categories.clear()
         Log.i(TAG, uris.size.toString())
@@ -54,14 +68,16 @@ object ImageLabelHelper {
         val start = System.currentTimeMillis()
         uris.forEach {
             cachedThreadPool.submit {
-                doLabel(context, it) {
+                getLabel(context, it) {
                     count++
 //                    Log.i(TAG, count.toString())
                     if (count >= uris.size) {
-                        Log.i(TAG, categories.keys.toString())
-                        Log.i(TAG, categories.values.size.toString())
+//                        Log.i(TAG, categories.keys.toString())
+//                        Log.i(TAG, categories.values.size.toString())
 
                         convertToLabels(context)
+                        callback?.invoke()
+                        isRunning = false
                         Log.d(
                             TAG, "total cost ${(System.currentTimeMillis() - start) / 1000f} seconds on ${
                                 uris.size
@@ -76,7 +92,6 @@ object ImageLabelHelper {
     private fun convertToLabels(context: Context) {
         val result = ArrayList<Labels>(categories.keys.size)
         val tags = JsonUtil.readJsonStr(context, "tags.json")
-
         val tagsMap = JSONObject.parseObject(tags)
         categories.forEach {
             val key = it.key
@@ -90,7 +105,7 @@ object ImageLabelHelper {
         Log.e(TAG, result.toString())
     }
 
-    fun doLabel(context: Context, uri: Uri, callback: () -> Unit) {
+    fun getLabel(context: Context, uri: Uri, callback: () -> Unit) {
         val image: InputImage
         try {
             image = InputImage.fromFilePath(context, uri)

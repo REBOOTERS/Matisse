@@ -13,8 +13,8 @@ public class LabelCategoryActivity extends BaseLabelListActivity {
         LabelCategoryAdapter adapter = new LabelCategoryAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        int spacing = getResources().getDimensionPixelSize(R.dimen.media_grid_spacing);
-        recyclerView.addItemDecoration(new MediaGridInset(3, spacing, false));
+        int spacing = getResources().getDimensionPixelSize(R.dimen.label_grid_spacing);
+        recyclerView.addItemDecoration(new MediaGridInset(3, spacing, true));
         adapter.update(ImageLabelHelper.INSTANCE.getLabelList());
     }
 

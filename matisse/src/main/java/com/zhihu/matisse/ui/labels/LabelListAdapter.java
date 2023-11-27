@@ -34,7 +34,7 @@ public class LabelListAdapter extends RecyclerView.Adapter<LabelListAdapter.MyHo
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         imageSize = parent.getContext().getResources().getDisplayMetrics().widthPixels / 3;
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.label_grid_content, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.label_content, parent, false);
         return new MyHolder(view);
     }
 

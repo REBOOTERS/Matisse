@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2017 Zhihu Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<resources>
-    <dimen name="media_grid_size">48dp</dimen>
-    <dimen name="media_grid_spacing">4dp</dimen>
-    <dimen name="label_grid_spacing">6dp</dimen>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:toosl="http://schemas.android.com/apk/tools"
+    android:id="@+id/media_thumbnail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="fitXY"
+    toosl:background="#00f" />
 
-    <dimen name="album_item_height">72dp</dimen>
-</resources>

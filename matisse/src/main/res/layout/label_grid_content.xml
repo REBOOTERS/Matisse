@@ -13,40 +13,52 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:toosl="http://schemas.android.com/apk/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    app:cardCornerRadius="8dp"
+    tools:background="#009688">
 
-    <ImageView
-        android:id="@+id/media_thumbnail"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        toosl:background="#00f" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/media_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            tools:layout_height="100dp"
+            tools:src="@drawable/ic_gif" />
 
 
-    <TextView
-        android:id="@+id/label_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/media_thumbnail"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:textColor="@android:color/black"
-        android:textSize="12sp"
-        android:visibility="gone"
-        tools:text="111" />
+        <TextView
+            android:id="@+id/label_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/media_thumbnail"
+            android:layout_margin="4dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="111" />
 
-    <TextView
-        android:id="@+id/label_text_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/label_text"
-        android:layout_marginBottom="8dp"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="12sp"
-        android:visibility="gone" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/label_text_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/label_text"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_toEndOf="@id/label_text"
+            android:layout_toRightOf="@id/label_text"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            tools:text="222" />
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
+

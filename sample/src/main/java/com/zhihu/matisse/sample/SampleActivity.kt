@@ -23,7 +23,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
-import android.os.Build.VERSION.SDK
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -172,7 +171,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             Log.d(TAG, "paths = ${it.first},urls = ${it.second}")
 
             it.second.forEach { uri ->
-                ImageLabelHelper.doLabel(this, uri) {}
+                ImageLabelHelper.getLabel(this, uri) {}
             }
 
             mAdapter?.setData(it.second, it.first)
