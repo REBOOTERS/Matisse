@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 def GROUP_ID = "com.zhihu.android"
 def ARTIFACT_ID = "matisse"
-def VERSION = "v0.5.6"
+def VERSION = "v0.5.7"
 
 
 // 1. 增加上传源码的task
