@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -93,7 +94,7 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
     private CheckRadioView mOriginal;
     private boolean mOriginalEnable;
 
-    private TextView labelEntrance;
+    private ImageView labelEntrance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,6 +139,8 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
         mOriginalLayout = findViewById(R.id.originalLayout);
         mOriginal = findViewById(R.id.original);
         mOriginalLayout.setOnClickListener(this);
+        labelEntrance = findViewById(R.id.label_entrance);
+        labelEntrance.setOnClickListener(this);
 
         mSelectedCollection.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -154,14 +157,6 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
         mAlbumCollection.loadAlbums();
-
-        labelEntrance = findViewById(R.id.debug);
-        labelEntrance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(v.getContext(), LabelCategoryActivity.class));
-            }
-        });
     }
 
     @Override
@@ -343,6 +338,8 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
             if (mSpec.onCheckedListener != null) {
                 mSpec.onCheckedListener.onCheck(mOriginalEnable);
             }
+        } else if (v.getId() == R.id.label_entrance) {
+            startActivity(new Intent(v.getContext(), LabelCategoryActivity.class));
         }
     }
 

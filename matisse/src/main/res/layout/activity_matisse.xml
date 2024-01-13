@@ -40,14 +40,15 @@
             android:textColor="?attr/album.element.color"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/debug"
+        <ImageView
+            android:id="@+id/label_entrance"
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="24dp"
-            android:text="debug"
+            tools:visibility="visible"
+            android:src="@drawable/baseline_auto_awesome_24"
             android:layout_marginRight="24dp" />
     </androidx.appcompat.widget.Toolbar>
 
