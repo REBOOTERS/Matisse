@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.alibaba.fastjson.JSONObject
 import com.engineer.ai.model.Labels
+import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeler
 import com.google.mlkit.vision.label.ImageLabeling
@@ -34,12 +35,14 @@ object ImageLabelHelper {
     fun getLabelList() = labelList
 
     fun init() {
+        initDefault()
+    }
+
+    fun initCustomLabeler() {
 //        val localModel = LocalModel.Builder().setAssetFilePath("model.tflite").build()
 //        val customImageLabelerOptions =
 //            CustomImageLabelerOptions.Builder(localModel).setConfidenceThreshold(0.5f).setMaxResultCount(5).build()
 //        labeler = ImageLabeling.getClient(customImageLabelerOptions)
-
-        initDefault()
     }
 
     private fun initDefault() {

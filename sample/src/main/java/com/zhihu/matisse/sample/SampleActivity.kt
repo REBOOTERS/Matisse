@@ -50,7 +50,9 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
 
     private var mAdapter: UriAdapter? = null
     private lateinit var switcher: SwitchMaterial
+    private var currentOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -72,6 +74,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
                 switcher.text = "切横屏"
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             }
+            currentOrientation = requestedOrientation
         }
 
         ImageLabelHelper.init()
@@ -158,13 +161,13 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         if (resultCode == Activity.RESULT_OK) {
             Log.e(TAG, ": ${data?.clipData}")
 
-            data?.clipData?.let {
-                Log.e(TAG, "clipData $it")
+            data?.clipData?.let { clip ->
+                Log.e(TAG, "clipData $clip")
                 val uriList = ArrayList<Uri>()
                 val pathList = ArrayList<String>()
-                for (i in 0 until it.itemCount) {
-                    Log.e(TAG, ": ${it.getItemAt(i)}")
-                    val uri = it.getItemAt(i).uri
+                for (i in 0 until clip.itemCount) {
+                    Log.e(TAG, ": ${clip.getItemAt(i)}")
+                    val uri = clip.getItemAt(i).uri
                     val path = AndroidFileUtils.getFilePathByUri(this, uri) ?: ""
                     Log.e(TAG, ": $path")
                     uriList.add(uri)
@@ -197,7 +200,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             when (input) {
                 DRACULA_THEME -> {
                     intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_Dracula)
-                        .countable(false).restrictOrientation(requestedOrientation)
+                        .countable(false).restrictOrientation(currentOrientation)
                         .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
                         .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine()).createIntent()
 
@@ -205,7 +208,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
 
                 MATERIAL_DESIGN_3_THEME -> {
                     intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_M3)
-                        .restrictOrientation(requestedOrientation).countable(false)
+                        .restrictOrientation(currentOrientation).countable(false)
                         .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
                         .autoHideToolbarOnSingleTap(true).originalEnable(true).maxOriginalSize(10)
                         .imageEngine(PicassoEngine()).createIntent()
@@ -215,7 +218,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
                 ONLY_GIF -> {
                     intent = Matisse.from(this@SampleActivity).choose(MimeType.of(MimeType.GIF), false)
 
-                        .restrictOrientation(requestedOrientation).countable(false).theme(R.style.Matisse_Dracula)
+                        .restrictOrientation(currentOrientation).countable(false).theme(R.style.Matisse_Dracula)
                         .maxSelectable(1) //
                         // .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
@@ -228,12 +231,12 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
 
                 else -> {
                     intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage(), false)
-                        .restrictOrientation(requestedOrientation).countable(true).capture(true).captureStrategy(
+                        .restrictOrientation(currentOrientation).countable(true).capture(true).captureStrategy(
                             CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test")
                         ).maxSelectable(9).addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
                         .thumbnailScale(0.85f).imageEngine(GlideEngine())
-                        .setOnSelectedListener { uriList: List<Uri?>?, pathList: List<String?> ->
+                        .setOnSelectedListener { _: List<Uri?>?, pathList: List<String?> ->
                             Log.e(
                                 "onSelected", "onSelected: pathList=$pathList"
                             )
