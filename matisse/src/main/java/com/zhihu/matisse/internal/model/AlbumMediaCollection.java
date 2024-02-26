@@ -85,12 +85,12 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
             } while (copy.moveToNext());
         }
         if (mContext.get() != null) {
-            ImageLabelHelper.INSTANCE.getLabel(mContext.get(), uriList, () -> {
-                if (mLabelLoadCallback != null) {
-                    mLabelLoadCallback.onLabelLoad();
-                }
-                return Unit.INSTANCE;
-            });
+//            ImageLabelHelper.INSTANCE.getLabel(mContext.get(), uriList, () -> {
+//                if (mLabelLoadCallback != null) {
+//                    mLabelLoadCallback.onLabelLoad();
+//                }
+//                return Unit.INSTANCE;
+//            });
         }
     }
 

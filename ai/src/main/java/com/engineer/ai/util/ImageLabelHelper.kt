@@ -9,7 +9,7 @@ import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeler
 import com.google.mlkit.vision.label.ImageLabeling
-import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
+import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions
 import java.util.concurrent.Executors
 import kotlin.concurrent.Volatile
 
@@ -35,19 +35,22 @@ object ImageLabelHelper {
     fun getLabelList() = labelList
 
     fun init() {
-        initDefault()
+//        initDefault()
+        initCustomLabeler()
+    }
+    // 1.tflite https://www.kaggle.com/models/google/mobilenet-v3/frameworks/tfLite/variations/large-075-224-classification-metadata
+    // 2.tflite https://www.kaggle.com/models/tensorflow/efficientnet/frameworks/tfLite/variations/lite4-fp32
+    private fun initCustomLabeler() {
+        val localModel = LocalModel.Builder().setAssetFilePath("1.tflite").build()
+        val customImageLabelerOptions =
+            CustomImageLabelerOptions.Builder(localModel).setConfidenceThreshold(0.1f)
+                .setMaxResultCount(15).build()
+        labeler = ImageLabeling.getClient(customImageLabelerOptions)
     }
 
-    fun initCustomLabeler() {
-//        val localModel = LocalModel.Builder().setAssetFilePath("model.tflite").build()
-//        val customImageLabelerOptions =
-//            CustomImageLabelerOptions.Builder(localModel).setConfidenceThreshold(0.5f).setMaxResultCount(5).build()
-//        labeler = ImageLabeling.getClient(customImageLabelerOptions)
-    }
-
-    private fun initDefault() {
-        labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
-    }
+//    private fun initDefault() {
+//        labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+//    }
 
     fun getLabel(context: Context, uris: List<Uri>, callback: (() -> Unit)? = null) {
 
@@ -82,7 +85,8 @@ object ImageLabelHelper {
                         callback?.invoke()
                         isRunning = false
                         Log.d(
-                            TAG, "total cost ${(System.currentTimeMillis() - start) / 1000f} seconds on ${
+                            TAG,
+                            "total cost ${(System.currentTimeMillis() - start) / 1000f} seconds on ${
                                 uris.size
                             } picture"
                         )
@@ -122,7 +126,14 @@ object ImageLabelHelper {
                     val confidence = label.confidence
                     val index = label.index
 //                    Log.i(TAG, "uri = $uri")
-//                    Log.i(TAG, "text=$text,confidence=$confidence,index=$index ,uri=$uri")
+                    val string = String.format(
+                        "text=%-10s,confidence=%-10f,index=%-3d ,uri=%s",
+                        text,
+                        confidence,
+                        index,
+                        uri
+                    )
+                    Log.i(TAG, string)
 
                     var list = categories[index]
                     if (list == null) {
@@ -135,7 +146,7 @@ object ImageLabelHelper {
                         categories[index]?.add(uri)
                     }
                     callback()
-                    break
+//                    break
                 }
 
             }?.addOnFailureListener { e ->
