@@ -10,6 +10,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeler
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.custom.CustomImageLabelerOptions
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import java.util.concurrent.Executors
 import kotlin.concurrent.Volatile
 
@@ -34,10 +35,16 @@ object ImageLabelHelper {
 
     fun getLabelList() = labelList
 
-    fun init() {
-//        initDefault()
-        initCustomLabeler()
+    fun init(context: Context) {
+        initDefault()
+//        initCustomLabeler()
+        val localLabelList = LabelManager.getLabelCategories(context)
+        if (localLabelList.isEmpty().not()) {
+            labelList.clear()
+            labelList.addAll(localLabelList)
+        }
     }
+
     // 1.tflite https://www.kaggle.com/models/google/mobilenet-v3/frameworks/tfLite/variations/large-075-224-classification-metadata
     // 2.tflite https://www.kaggle.com/models/tensorflow/efficientnet/frameworks/tfLite/variations/lite4-fp32
     private fun initCustomLabeler() {
@@ -48,9 +55,9 @@ object ImageLabelHelper {
         labeler = ImageLabeling.getClient(customImageLabelerOptions)
     }
 
-//    private fun initDefault() {
-//        labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
-//    }
+    private fun initDefault() {
+        labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+    }
 
     fun getLabel(context: Context, uris: List<Uri>, callback: (() -> Unit)? = null) {
 
@@ -78,9 +85,6 @@ object ImageLabelHelper {
                     count++
 //                    Log.i(TAG, count.toString())
                     if (count >= uris.size) {
-//                        Log.i(TAG, categories.keys.toString())
-//                        Log.i(TAG, categories.values.size.toString())
-
                         convertToLabels(context)
                         callback?.invoke()
                         isRunning = false
@@ -110,6 +114,7 @@ object ImageLabelHelper {
         labelList.clear()
         labelList.addAll(result)
         Log.e(TAG, result.toString())
+        LabelManager.updateLabelCategory(context, labelList)
     }
 
     fun getLabel(context: Context, uri: Uri, callback: () -> Unit) {
@@ -125,7 +130,6 @@ object ImageLabelHelper {
                     val text = label.text
                     val confidence = label.confidence
                     val index = label.index
-//                    Log.i(TAG, "uri = $uri")
                     val string = String.format(
                         "text=%-10s,confidence=%-10f,index=%-3d ,uri=%s",
                         text,
@@ -146,7 +150,7 @@ object ImageLabelHelper {
                         categories[index]?.add(uri)
                     }
                     callback()
-//                    break
+                    break
                 }
 
             }?.addOnFailureListener { e ->

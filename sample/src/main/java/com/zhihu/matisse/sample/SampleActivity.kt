@@ -77,7 +77,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             currentOrientation = requestedOrientation
         }
 
-        ImageLabelHelper.init()
+        ImageLabelHelper.init(this)
     }
 
     // <editor-fold defaultstate="collapsed" desc="onClick">

@@ -31,13 +31,14 @@ android {
 
 dependencies {
     // 图像标签-标准模型
-//    implementation("com.google.mlkit:image-labeling:17.0.7") {
-//        exclude group: "androidx.fragment"
-//    }
+    implementation("com.google.mlkit:image-labeling:17.0.7") {
+        exclude group: "androidx.fragment"
+    }
     // 图像标签-自定义模型
     implementation("com.google.mlkit:image-labeling-custom:17.0.2") {
         exclude group: "androidx.fragment"
     }
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.9.0"
     implementation 'com.alibaba:fastjson:1.1.73.android'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

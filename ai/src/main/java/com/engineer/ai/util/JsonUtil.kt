@@ -3,6 +3,7 @@ package com.engineer.ai.util
 import android.content.Context
 import android.util.JsonReader
 import android.util.Log
+import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import java.io.BufferedReader
@@ -12,6 +13,17 @@ import java.lang.StringBuilder
 object JsonUtil {
     const val TAG = "JsonUtil"
 
+    fun toJson(any: Any): String {
+        return JSON.toJSONString(any)
+    }
+
+    fun <T : Any> toObj(str: String, t: T): T {
+        return JSONObject.parseObject(str, t::class.java)
+    }
+
+    fun <T> toObjList(str: String, t: Class<T>): List<T> {
+        return JSONObject.parseArray(str, t)
+    }
 
     fun readJsonStr(context: Context, filename: String): String {
         context.assets.open(filename).use { inputStream ->
