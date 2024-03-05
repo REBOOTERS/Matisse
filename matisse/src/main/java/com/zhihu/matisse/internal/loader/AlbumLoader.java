@@ -67,8 +67,7 @@ public class AlbumLoader extends CursorLoader {
             MediaStore.Files.FileColumns._ID,
             COLUMN_BUCKET_ID,
             COLUMN_BUCKET_DISPLAY_NAME,
-            MediaStore.MediaColumns.MIME_TYPE,
-            MediaStore.MediaColumns.IS_FAVORITE};
+            MediaStore.MediaColumns.MIME_TYPE};
 
     // === params for showSingleMediaType: false ===
     private static final String SELECTION =
@@ -237,13 +236,8 @@ public class AlbumLoader extends CursorLoader {
                                 albums.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
                         Uri uri = getUri(albums);
                         long count = countMap.get(bucketId);
-                        String fav = "";
-                        int favIndex = albums.getColumnIndex(MediaStore.MediaColumns.IS_FAVORITE);
-                        if (favIndex > 0) {
-                             fav = albums.getString(favIndex);
-                        }
                         Log.e("zzzz", "name = " + bucketDisplayName +
-                                ",count = " + count + ",mimeType " + mimeType + ",fav = " + fav);
+                                ",count = " + count + ",mimeType " + mimeType);
 
                         otherAlbums.addRow(new String[]{
                                 Long.toString(fileId),
