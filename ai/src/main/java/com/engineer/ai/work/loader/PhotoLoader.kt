@@ -17,7 +17,7 @@ class PhotoLoader(private val context: Context, private val callback: (ArrayList
     private val TAG = "PhotoLoader"
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        return AlbumMediaLoader.newInstance(context)
+        return GalleryMediaLoader.newInstance(context)
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {

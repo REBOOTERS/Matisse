@@ -17,14 +17,13 @@
 package com.engineer.ai.work.loader
 
 import android.content.Context
-import android.database.Cursor
 import android.provider.MediaStore
 import androidx.loader.content.CursorLoader
 
 /**
  * Load images into a single cursor.
  */
-class AlbumMediaLoader private constructor(context: Context, selection: String, selectionArgs: Array<String>) :
+class GalleryMediaLoader private constructor(context: Context, selection: String, selectionArgs: Array<String>) :
     CursorLoader(context, QUERY_URI, PROJECTION, selection, selectionArgs, ORDER_BY) {
 
     companion object {
@@ -41,7 +40,7 @@ class AlbumMediaLoader private constructor(context: Context, selection: String, 
         fun newInstance(context: Context): CursorLoader {
             val selection = SELECTION_ALL_FOR_SINGLE_MEDIA_TYPE
             val selectionArgs = arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString())
-            return AlbumMediaLoader(context, selection, selectionArgs)
+            return GalleryMediaLoader(context, selection, selectionArgs)
         }
     }
 }

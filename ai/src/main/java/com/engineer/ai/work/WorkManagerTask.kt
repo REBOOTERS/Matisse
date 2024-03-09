@@ -43,12 +43,12 @@ fun scanAndParse(context: Context) {
 }
 
 fun createWorkRequest(): PeriodicWorkRequest {
-    val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.UNMETERED).setRequiresCharging(true)
+    val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.NOT_REQUIRED)
         .setRequiresBatteryNotLow(true).build()
 
 
-    return PeriodicWorkRequestBuilder<ScanUrlWork>(6, TimeUnit.MINUTES).setConstraints(constraints)
-        .setBackoffCriteria(BackoffPolicy.LINEAR, 3, TimeUnit.SECONDS).addTag(WORK_TAG).build()
+    return PeriodicWorkRequestBuilder<ScanUrlWork>(6, TimeUnit.HOURS).setConstraints(constraints)
+        .setBackoffCriteria(BackoffPolicy.LINEAR, 30, TimeUnit.SECONDS).addTag(WORK_TAG).build()
 }
 
 fun triggerWork(context: Context) {

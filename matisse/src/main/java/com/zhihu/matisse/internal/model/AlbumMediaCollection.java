@@ -74,24 +74,24 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
         }
 
         mCallbacks.onAlbumMediaLoad(data);
-        Cursor copy = data;
-        ArrayList<Uri> uriList = new ArrayList<>();
-        if (copy.moveToFirst()) {
-            do {
-                Uri uri = getUri(copy);
-//                Log.d("zzzz", "uri = " + uri);
-                uriList.add(uri);
-
-            } while (copy.moveToNext());
-        }
-        if (mContext.get() != null) {
-            ImageLabelHelper.INSTANCE.getLabel(mContext.get(), uriList, () -> {
-                if (mLabelLoadCallback != null) {
-                    mLabelLoadCallback.onLabelLoad();
-                }
-                return Unit.INSTANCE;
-            });
-        }
+//        Cursor copy = data;
+//        ArrayList<Uri> uriList = new ArrayList<>();
+//        if (copy.moveToFirst()) {
+//            do {
+//                Uri uri = getUri(copy);
+////                Log.d("zzzz", "uri = " + uri);
+//                uriList.add(uri);
+//
+//            } while (copy.moveToNext());
+//        }
+//        if (mContext.get() != null) {
+//            ImageLabelHelper.INSTANCE.getLabel(mContext.get(), uriList, () -> {
+//                if (mLabelLoadCallback != null) {
+//                    mLabelLoadCallback.onLabelLoad();
+//                }
+//                return Unit.INSTANCE;
+//            });
+//        }
     }
 
     @Override

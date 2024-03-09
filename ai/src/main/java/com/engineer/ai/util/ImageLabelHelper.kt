@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.alibaba.fastjson.JSONObject
 import com.engineer.ai.model.Labels
+import com.engineer.ai.work.triggerWork
 import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeler
@@ -43,6 +44,7 @@ object ImageLabelHelper {
             labelList.clear()
             labelList.addAll(localLabelList)
         }
+        triggerWork(context)
     }
 
     // 1.tflite https://www.kaggle.com/models/google/mobilenet-v3/frameworks/tfLite/variations/large-075-224-classification-metadata
