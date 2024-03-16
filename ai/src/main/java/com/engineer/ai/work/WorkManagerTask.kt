@@ -13,8 +13,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.engineer.ai.R
 import com.engineer.ai.util.ImageLabelHelper
+import com.engineer.ai.util.UriManager
 import com.engineer.ai.util.createNotification
-import com.engineer.ai.work.loader.PhotoLoader
 import java.util.concurrent.TimeUnit
 
 
@@ -23,7 +23,7 @@ const val WORK_TAG = "scan_url"
 class ScanUrlWork(private val appContext: Context, workerParameters: WorkerParameters) :
     CoroutineWorker(appContext, workerParameters) {
     override suspend fun doWork(): Result {
-        scanAndParse(appContext)
+        readAndParse(appContext)
         return Result.success()
     }
 
@@ -36,9 +36,10 @@ class ScanUrlWork(private val appContext: Context, workerParameters: WorkerParam
     }
 }
 
-fun scanAndParse(context: Context) {
-    PhotoLoader(context) {
-        ImageLabelHelper.getLabel(context, it)
+fun readAndParse(context: Context) {
+    val uris = UriManager.getLocalUri(context)
+    if (uris.isNotEmpty()) {
+        ImageLabelHelper.getLabel(context, uris)
     }
 }
 

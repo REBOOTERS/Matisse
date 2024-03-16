@@ -12,8 +12,10 @@ object LabelManager {
         saveLabels(context, labelList)
     }
 
-    fun getLabelCategories(context: Context): List<Labels> {
-        return getLabels(context)
+    fun getLabelCategories(context: Context, callback: (List<Labels>) -> Unit) {
+        Thread {
+            callback(getLabels(context))
+        } .start()
     }
 
 
@@ -37,7 +39,7 @@ object LabelManager {
                 val iterator = labelSubList.iterator()
                 while (iterator.hasNext()) {
                     val uri = iterator.next()
-                    val filePath = FileUtils.getFilePathByUri(context, uri)
+                    val filePath = FileUtils.getPath(context, uri)
                     Log.i(TAG, "filePath = $filePath, $uri")
                     if (filePath != null) {
                         val file = File(filePath)

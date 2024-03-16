@@ -398,9 +398,14 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
                 }
             });
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName()).commitAllowingStateLoss();
-            if (!ImageLabelHelper.INSTANCE.getLabelList().isEmpty()) {
-                labelEntrance.setVisibility(View.VISIBLE);
-            }
+            ImageLabelHelper.INSTANCE.addLabelReadyListener(() -> {
+                if (isFinishing()) {
+                    return;
+                }
+                if (!ImageLabelHelper.INSTANCE.getLabelList().isEmpty()) {
+                    labelEntrance.post(() -> labelEntrance.setVisibility(View.VISIBLE));
+                }
+            });
         }
     }
 

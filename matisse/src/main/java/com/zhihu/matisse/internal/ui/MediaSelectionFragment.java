@@ -15,17 +15,25 @@
  */
 package com.zhihu.matisse.internal.ui;
 
+import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.engineer.ai.util.ImageLabelHelper;
+import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
@@ -35,6 +43,10 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.internal.ui.adapter.AlbumMediaAdapter;
 import com.zhihu.matisse.internal.ui.widget.MediaGridInset;
 import com.zhihu.matisse.internal.utils.UIUtils;
+
+import java.util.ArrayList;
+
+import kotlin.Unit;
 
 public class MediaSelectionFragment extends Fragment implements
         AlbumMediaCollection.AlbumMediaCallbacks, AlbumMediaAdapter.CheckStateListener,
@@ -107,14 +119,6 @@ public class MediaSelectionFragment extends Fragment implements
         mRecyclerView.addItemDecoration(new MediaGridInset(spanCount, spacing, false));
         mRecyclerView.setAdapter(mAdapter);
         mAlbumMediaCollection.onCreate(getActivity(), this);
-        mAlbumMediaCollection.setLabelLoadCallback(new AlbumMediaCollection.LabelLoadCallback() {
-            @Override
-            public void onLabelLoad() {
-                if (mLabelLoadCallback != null) {
-                    mLabelLoadCallback.onLabelLoad();
-                }
-            }
-        });
         mAlbumMediaCollection.load(album, selectionSpec.capture);
     }
 
@@ -135,6 +139,28 @@ public class MediaSelectionFragment extends Fragment implements
     @Override
     public void onAlbumMediaLoad(Cursor cursor) {
         mAdapter.swapCursor(cursor);
+        triggerImageLabelProcess(cursor);
+    }
+
+    public void triggerImageLabelProcess(Cursor cursor) {
+        Log.i("trigger","triggerImageLabelProcess");
+        Cursor copy = cursor;
+        ArrayList<Uri> uriList = new ArrayList<>();
+        if (copy.moveToFirst()) {
+            do {
+                Uri uri = getUri(copy);
+//                Log.d("zzzz", "uri = " + uri);
+                uriList.add(uri);
+
+            } while (copy.moveToNext());
+        }
+        ImageLabelHelper.INSTANCE.getLabel(getContext(), uriList, () -> {
+            if (mLabelLoadCallback != null) {
+                mLabelLoadCallback.onLabelLoad();
+            }
+            return Unit.INSTANCE;
+        });
+
     }
 
     @Override
@@ -164,5 +190,25 @@ public class MediaSelectionFragment extends Fragment implements
 
     public void setLabelLoadCallback(AlbumMediaCollection.LabelLoadCallback labelLoadCallback) {
         this.mLabelLoadCallback = labelLoadCallback;
+    }
+
+    @SuppressLint("Range")
+    private static Uri getUri(Cursor cursor) {
+        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
+        String mimeType = cursor.getString(
+                cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+        Uri contentUri;
+
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            // ?
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+
+        Uri uri = ContentUris.withAppendedId(contentUri, id);
+        return uri;
     }
 }

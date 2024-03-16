@@ -48,8 +48,6 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
     private AlbumMediaCallbacks mCallbacks;
     private int mCurrentLoaderId = 2;
 
-    private LabelLoadCallback mLabelLoadCallback;
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Context context = mContext.get();
@@ -62,8 +60,7 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
             return null;
         }
 
-        return AlbumMediaLoader.newInstance(context, album,
-                album.isAll() && args.getBoolean(ARGS_ENABLE_CAPTURE, false));
+        return AlbumMediaLoader.newInstance(context, album, album.isAll() && args.getBoolean(ARGS_ENABLE_CAPTURE, false));
     }
 
     @Override
@@ -72,26 +69,7 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
         if (context == null) {
             return;
         }
-
         mCallbacks.onAlbumMediaLoad(data);
-//        Cursor copy = data;
-//        ArrayList<Uri> uriList = new ArrayList<>();
-//        if (copy.moveToFirst()) {
-//            do {
-//                Uri uri = getUri(copy);
-////                Log.d("zzzz", "uri = " + uri);
-//                uriList.add(uri);
-//
-//            } while (copy.moveToNext());
-//        }
-//        if (mContext.get() != null) {
-//            ImageLabelHelper.INSTANCE.getLabel(mContext.get(), uriList, () -> {
-//                if (mLabelLoadCallback != null) {
-//                    mLabelLoadCallback.onLabelLoad();
-//                }
-//                return Unit.INSTANCE;
-//            });
-//        }
     }
 
     @Override
@@ -116,7 +94,6 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
             mLoaderManager.destroyLoader(mCurrentLoaderId);
         }
         mCallbacks = null;
-        mLabelLoadCallback = null;
     }
 
     public void load(@Nullable Album target) {
@@ -140,28 +117,5 @@ public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Curso
 
     public interface LabelLoadCallback {
         void onLabelLoad();
-    }
-
-    public void setLabelLoadCallback(LabelLoadCallback labelLoadCallback) {
-        this.mLabelLoadCallback = labelLoadCallback;
-    }
-
-    private static Uri getUri(Cursor cursor) {
-        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
-        String mimeType = cursor.getString(
-                cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
-        Uri contentUri;
-
-        if (MimeType.isImage(mimeType)) {
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        } else if (MimeType.isVideo(mimeType)) {
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        } else {
-            // ?
-            contentUri = MediaStore.Files.getContentUri("external");
-        }
-
-        Uri uri = ContentUris.withAppendedId(contentUri, id);
-        return uri;
     }
 }

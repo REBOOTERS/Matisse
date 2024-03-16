@@ -33,18 +33,31 @@ object ImageLabelHelper {
 
     private var labelList = ArrayList<Labels>()
 
+    private var labelReadyListener: LabelReadyListener? = null
+
 
     fun getLabelList() = labelList
 
     fun init(context: Context) {
         initDefault()
 //        initCustomLabeler()
-        val localLabelList = LabelManager.getLabelCategories(context)
-        if (localLabelList.isEmpty().not()) {
-            labelList.clear()
-            labelList.addAll(localLabelList)
+        LabelManager.getLabelCategories(context) {
+            if (it.isEmpty().not()) {
+                labelList.clear()
+                labelList.addAll(it)
+                labelReadyListener?.ready()
+            }
         }
-        triggerWork(context)
+
+//        triggerWork(context)
+    }
+
+    fun addLabelReadyListener(listener: LabelReadyListener) {
+        labelReadyListener = listener
+    }
+
+    public interface LabelReadyListener {
+        fun ready()
     }
 
     // 1.tflite https://www.kaggle.com/models/google/mobilenet-v3/frameworks/tfLite/variations/large-075-224-classification-metadata
@@ -61,11 +74,12 @@ object ImageLabelHelper {
         labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
     }
 
-    fun getLabel(context: Context, uris: List<Uri>, callback: (() -> Unit)? = null) {
 
+    fun getLabel(context: Context, uris: List<Uri>, callback: (() -> Unit)? = null) {
+        UriManager.updateUri(context, uris)
         if (labelList.size > 0) {
             callback?.invoke()
-            return
+//            return
         }
 
         if (isRunning) {
@@ -78,7 +92,7 @@ object ImageLabelHelper {
         Log.i(TAG, uris.size.toString())
 
 
-        val cachedThreadPool = Executors.newFixedThreadPool(4)
+        val cachedThreadPool = Executors.newFixedThreadPool(1)
         var count = 0
         val start = System.currentTimeMillis()
         uris.forEach {
@@ -102,8 +116,26 @@ object ImageLabelHelper {
         }
     }
 
+    private fun filterUris(context: Context, uri: Uri): Boolean {
+        if (uri.toString().endsWith("-1")) {
+            return true
+        }
+        val path = FileUtils.getPath(context, uri)
+        Log.d(TAG, "path is $path")
+        if (path == null) {
+            return true
+        } else {
+            if (path.endsWith(".mp4") || path.endsWith(".gif")) {
+                Log.e(TAG, "skip $path")
+                return true
+            }
+        }
+
+        return false
+    }
+
     private fun convertToLabels(context: Context) {
-        val result = ArrayList<Labels>(categories.keys.size)
+        val result = ArrayList<Labels>()
         val tags = JsonUtil.readJsonStr(context, "tags.json")
         val tagsMap = JSONObject.parseObject(tags)
         categories.forEach {
@@ -122,6 +154,9 @@ object ImageLabelHelper {
     fun getLabel(context: Context, uri: Uri, callback: () -> Unit) {
         val image: InputImage
         try {
+            if (filterUris(context, uri)) {
+                callback()
+            }
             image = InputImage.fromFilePath(context, uri)
             labeler?.process(image)?.addOnSuccessListener { labels ->
                 if (labels == null || labels.size == 0) {
