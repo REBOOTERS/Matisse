@@ -76,8 +76,6 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             }
             currentOrientation = requestedOrientation
         }
-
-        ImageLabelHelper.init(this)
     }
 
     // <editor-fold defaultstate="collapsed" desc="onClick">
@@ -90,6 +88,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         }
         PermissionX.init(this).permissions(permission).request { allGranted, _, _ ->
             if (allGranted) {
+                ImageLabelHelper.init(this)
                 startAction(v)
             } else {
                 Toast.makeText(
