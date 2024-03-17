@@ -49,7 +49,7 @@ object ImageLabelHelper {
             }
         }
 
-//        triggerWork(context)
+        triggerWork(context)
     }
 
     fun addLabelReadyListener(listener: LabelReadyListener) {
@@ -79,7 +79,7 @@ object ImageLabelHelper {
         UriManager.updateUri(context, uris)
         if (labelList.size > 0) {
             callback?.invoke()
-//            return
+            return
         }
 
         if (isRunning) {
