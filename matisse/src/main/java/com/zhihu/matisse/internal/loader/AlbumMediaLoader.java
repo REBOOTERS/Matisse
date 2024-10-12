@@ -138,6 +138,9 @@ public class AlbumMediaLoader extends CursorLoader {
                 selection = SELECTION_ALL_FOR_GIF;
                 selectionArgs = getSelectionArgsForGifType(
                         MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
+            } else if (SelectionSpec.getInstance().onlyShowStaticImages()) {
+                selection = LoaderHelper.getSelection();
+                selectionArgs = LoaderHelper.getSelectionArgs();
             } else if (SelectionSpec.getInstance().onlyShowImages()) {
                 selection = SELECTION_ALL_FOR_SINGLE_MEDIA_TYPE;
                 selectionArgs =
@@ -159,6 +162,9 @@ public class AlbumMediaLoader extends CursorLoader {
                 selectionArgs =
                         getSelectionAlbumArgsForGifType(
                                 MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE, album.getId());
+            } else if (SelectionSpec.getInstance().onlyShowStaticImages()) {
+                selection = LoaderHelper.getSelection();
+                selectionArgs = LoaderHelper.getSelectionArgs();
             } else if (SelectionSpec.getInstance().onlyShowImages()) {
                 selection = SELECTION_ALBUM_FOR_SINGLE_MEDIA_TYPE;
                 selectionArgs =
@@ -170,6 +176,9 @@ public class AlbumMediaLoader extends CursorLoader {
                 selectionArgs = getSelectionAlbumArgsForSingleMediaType(
                         MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO,
                         album.getId());
+            } else if (SelectionSpec.getInstance().onlyShowStaticImages()) {
+                selection = LoaderHelper.getSelection();
+                selectionArgs = LoaderHelper.getSelectionArgs();
             } else {
                 selection = SELECTION_ALBUM;
                 selectionArgs = getSelectionAlbumArgs(album.getId());

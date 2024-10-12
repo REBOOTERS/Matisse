@@ -198,7 +198,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             val intent: Intent?
             when (input) {
                 DRACULA_THEME -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_Dracula)
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofStaticImage()).theme(R.style.Matisse_Dracula)
                         .countable(false).restrictOrientation(currentOrientation)
                         .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
                         .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine()).createIntent()
@@ -229,7 +229,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 else -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage(), false)
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofStaticImage(), false)
                         .restrictOrientation(currentOrientation).countable(true).capture(true).captureStrategy(
                             CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test")
                         ).maxSelectable(9).addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))

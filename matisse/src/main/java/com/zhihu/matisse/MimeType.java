@@ -112,6 +112,10 @@ public enum MimeType {
         return EnumSet.of(JPEG, PNG, GIF, BMP, WEBP);
     }
 
+    public static Set<MimeType> ofStaticImage() {
+        return EnumSet.of(JPEG, PNG, BMP, WEBP);
+    }
+
     public static Set<MimeType> ofImage(boolean onlyGif) {
         return EnumSet.of(GIF);
     }
