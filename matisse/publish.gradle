@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 def GROUP_ID = "com.zhihu.android"
 def ARTIFACT_ID = "matisse"
-def VERSION = "v0.5.7"
+def VERSION = "v0.6.0"
 
 
 // 1. 增加上传源码的task
@@ -22,8 +22,6 @@ afterEvaluate {
                 groupId = GROUP_ID
                 artifactId = ARTIFACT_ID
                 version = VERSION
-                print("11111")
-                print(components)
             }
         }
     }
