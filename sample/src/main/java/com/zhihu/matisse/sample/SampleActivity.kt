@@ -28,11 +28,17 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.ViewConfigurationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.DynamicColors
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.permissionx.guolindev.PermissionX
 import com.zhihu.matisse.Matisse
@@ -53,7 +59,14 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        DynamicColors.applyToActivityIfAvailable(this)
         setContentView(R.layout.activity_main)
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.setPadding(statusBar.left, statusBar.top, statusBar.right, statusBar.bottom)
+            insets
+        }
         findViewById<View>(R.id.zhihu).setOnClickListener(this)
         findViewById<View>(R.id.dracula).setOnClickListener(this)
         findViewById<View>(R.id.material_design_3).setOnClickListener(this)
@@ -186,58 +199,75 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private inner class PickImageUriContract : ActivityResultContract<Any, Pair<List<String>, List<Uri>>>() {
+    private inner class PickImageUriContract :
+        ActivityResultContract<Any, Pair<List<String>, List<Uri>>>() {
         override fun createIntent(context: Context, input: Any): Intent {
             val intent: Intent?
             when (input) {
                 DRACULA_THEME -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_Dracula)
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage())
+                        .theme(R.style.Matisse_Dracula)
                         .countable(false).restrictOrientation(currentOrientation)
-                        .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
-                        .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine()).createIntent()
+                        .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .maxSelectable(9)
+                        .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine())
+                        .createIntent()
 
                 }
 
                 MATERIAL_DESIGN_3_THEME -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_M3)
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage())
+                        .theme(R.style.Matisse_M3)
                         .restrictOrientation(currentOrientation).countable(false)
-                        .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
+                        .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .maxSelectable(9)
                         .autoHideToolbarOnSingleTap(true).originalEnable(true).maxOriginalSize(10)
                         .imageEngine(PicassoEngine()).createIntent()
 
                 }
 
                 ONLY_GIF -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.of(MimeType.GIF), false)
+                    intent =
+                        Matisse.from(this@SampleActivity).choose(MimeType.of(MimeType.GIF), false)
 
-                        .restrictOrientation(currentOrientation).countable(false).theme(R.style.Matisse_Dracula)
-                        .maxSelectable(1) //
-                        // .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                        .gridExpectedSize(
-                            resources.getDimensionPixelSize(R.dimen.grid_expected_size)
-                        ).restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT).thumbnailScale(0.85f)
-                        .imageEngine(GlideEngine()).showSingleMediaType(true) //
-                        // .originalEnable(true)
-                        .maxOriginalSize(10).autoHideToolbarOnSingleTap(true).createIntent()
+                            .restrictOrientation(currentOrientation).countable(false)
+                            .theme(R.style.Matisse_Dracula)
+                            .maxSelectable(1) //
+                            // .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                            .gridExpectedSize(
+                                resources.getDimensionPixelSize(R.dimen.grid_expected_size)
+                            ).restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                            .thumbnailScale(0.85f)
+                            .imageEngine(GlideEngine()).showSingleMediaType(true) //
+                            // .originalEnable(true)
+                            .maxOriginalSize(10).autoHideToolbarOnSingleTap(true).createIntent()
                 }
 
                 else -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofStaticImage(), false)
-                        .restrictOrientation(currentOrientation).countable(true).capture(true).captureStrategy(
-                            CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test")
-                        ).maxSelectable(9).addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                        .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
-                        .thumbnailScale(0.85f).imageEngine(GlideEngine())
-                        .setOnSelectedListener { _: List<Uri?>?, pathList: List<String?> ->
-                            Log.e(
-                                "onSelected", "onSelected: pathList=$pathList"
-                            )
-                        }.showSingleMediaType(true).originalEnable(true).maxOriginalSize(10)
-                        .autoHideToolbarOnSingleTap(true).setOnCheckedListener { isChecked: Boolean ->
-                            Log.e(
-                                "isChecked", "onCheck: isChecked=$isChecked"
-                            )
-                        }.createIntent()
+                    intent =
+                        Matisse.from(this@SampleActivity).choose(MimeType.ofStaticImage(), false)
+                            .restrictOrientation(currentOrientation).countable(true).capture(true)
+                            .captureStrategy(
+                                CaptureStrategy(
+                                    true,
+                                    "com.zhihu.matisse.sample.fileprovider",
+                                    "test"
+                                )
+                            ).maxSelectable(9)
+                            .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                            .gridExpectedSize(resources.getDimensionPixelSize(R.dimen.grid_expected_size))
+                            .thumbnailScale(0.85f).imageEngine(GlideEngine())
+                            .setOnSelectedListener { _: List<Uri?>?, pathList: List<String?> ->
+                                Log.e(
+                                    "onSelected", "onSelected: pathList=$pathList"
+                                )
+                            }.showSingleMediaType(true).originalEnable(true).maxOriginalSize(10)
+                            .autoHideToolbarOnSingleTap(true)
+                            .setOnCheckedListener { isChecked: Boolean ->
+                                Log.e(
+                                    "isChecked", "onCheck: isChecked=$isChecked"
+                                )
+                            }.createIntent()
                 }
             }
             return intent!!

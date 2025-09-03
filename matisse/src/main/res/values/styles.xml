@@ -18,7 +18,7 @@
 
     //====================================== Theme Zhihu ===========================================
 
-    <style name="Matisse.Zhihu" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Matisse.Zhihu" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="colorPrimary">@color/zhihu_primary</item>
         <item name="colorPrimaryDark">@color/zhihu_primary_dark</item>
         <item name="toolbar">@style/Toolbar.Zhihu</item>
@@ -41,17 +41,17 @@
         <item name="capture.textColor">@color/zhihu_capture</item>
     </style>
 
-    <style name="Toolbar.Zhihu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="Toolbar.Zhihu" parent="ThemeOverlay.Material3.ActionBar">
 
     </style>
 
-    <style name="Popup.Zhihu" parent="Widget.AppCompat.Light.ListPopupWindow">
+    <style name="Popup.Zhihu" parent="Widget.Material3.PopupMenu.ListPopupWindow">
         <item name="android:popupBackground">@color/zhihu_album_popup_bg</item>
     </style>
 
     //===================================== Theme Dracula ==========================================
 
-    <style name="Matisse.Dracula" parent="Theme.AppCompat.NoActionBar">
+    <style name="Matisse.Dracula" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <item name="colorPrimary">@color/dracula_primary</item>
         <item name="colorPrimaryDark">@color/dracula_primary_dark</item>
         <item name="toolbar">@style/Toolbar.Dracula</item>

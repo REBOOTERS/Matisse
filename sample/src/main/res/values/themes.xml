@@ -4,6 +4,7 @@
     <style name="Base.Theme.M3" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="dynamicColorThemeOverlay">@style/ThemeOverlay.Material3.DynamicColors.DayNight</item>
     </style>
 
     <style name="Theme.M3" parent="Base.Theme.M3" />

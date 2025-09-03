@@ -34,10 +34,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.zhihu.matisse.R;
@@ -99,12 +105,22 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
         mSpec = SelectionSpec.getInstance();
         setTheme(mSpec.themeId);
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         if (!mSpec.hasInited) {
             setResult(RESULT_CANCELED);
             finish();
             return;
         }
         setContentView(R.layout.activity_matisse);
+        ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), new OnApplyWindowInsetsListener() {
+            @NonNull
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+                Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(statusBarInsets.left, statusBarInsets.top, statusBarInsets.right, statusBarInsets.bottom);
+                return insets;
+            }
+        });
 
         if (mSpec.needOrientationRestriction()) {
             setRequestedOrientation(mSpec.orientation);
