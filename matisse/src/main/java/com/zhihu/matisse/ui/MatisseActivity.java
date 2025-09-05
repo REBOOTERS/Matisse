@@ -29,6 +29,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -112,15 +113,6 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
             return;
         }
         setContentView(R.layout.activity_matisse);
-        ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), new OnApplyWindowInsetsListener() {
-            @NonNull
-            @Override
-            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
-                Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(statusBarInsets.left, statusBarInsets.top, statusBarInsets.right, statusBarInsets.bottom);
-                return insets;
-            }
-        });
 
         if (mSpec.needOrientationRestriction()) {
             setRequestedOrientation(mSpec.orientation);
@@ -170,6 +162,16 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
         mAlbumCollection.loadAlbums();
+        ViewGroup containerShell = findViewById(R.id.container_shell);
+        ViewCompat.setOnApplyWindowInsetsListener(containerShell, new OnApplyWindowInsetsListener() {
+            @NonNull
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+                Insets statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+                v.setPadding(statusBarInsets.left, statusBarInsets.top, statusBarInsets.right, statusBarInsets.bottom);
+                return insets;
+            }
+        });
     }
 
     @Override
